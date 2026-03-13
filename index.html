@@ -496,7 +496,7 @@ function submitPassword(){
     return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
   }
   sha256(input.value).then(function(hash){
-    if(hash === '7be68d4ab73cc8c1e5463030c3073df7f7c647a4dbea3741d3978fde4b239ffa'){
+    if(hash === '6418434cf9c1a75d751957af2c240a690ba2de96f578299f6fb3cd790ebb'){
       _editUnlocked = true;
       document.getElementById('pwd-modal').remove();
       openPanel();
