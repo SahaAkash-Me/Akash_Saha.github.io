@@ -459,9 +459,54 @@ function buildDynamicEditors(){
   if(typeof buildCertsEditor==='function')buildCertsEditor();
   if(typeof buildLangEditor==='function')buildLangEditor();
 }
+
+// ── PASSWORD GATE ──
+var _editUnlocked = false;
+function checkPassword(){
+  if(_editUnlocked){ openPanel(); return; }
+  // Show password modal
+  var existing = document.getElementById('pwd-modal');
+  if(existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'pwd-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:#0D1117;border:1px solid #00D9FF;padding:32px 36px;min-width:300px;box-shadow:0 0 40px rgba(0,217,255,0.2);font-family:'Space Mono',monospace;">
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#00D9FF;margin-bottom:6px;text-shadow:0 0 8px #00D9FF99;">// ACCESS_REQUIRED</div>
+      <div style="font-size:12px;color:#7A9BB5;margin-bottom:22px;letter-spacing:0.05em;">Enter password to edit profile</div>
+      <input id="pwd-input" type="password" placeholder="Password" autofocus
+        style="width:100%;padding:10px 12px;background:#080C10;border:1px solid #1A2A3A;color:#C9D8E8;font-family:'Space Mono',monospace;font-size:13px;outline:none;margin-bottom:14px;letter-spacing:0.08em;"
+        onkeydown="if(event.key==='Enter')submitPassword()">
+      <div id="pwd-error" style="color:#ff5555;font-size:10px;letter-spacing:0.1em;margin-bottom:12px;display:none;">// ACCESS_DENIED — Wrong password</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="submitPassword()" style="flex:1;padding:10px;background:transparent;border:1px solid #00D9FF;color:#00D9FF;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">[ ENTER ]</button>
+        <button onclick="document.getElementById('pwd-modal').remove()" style="padding:10px 16px;background:transparent;border:1px solid #1A2A3A;color:#7A9BB5;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;">CANCEL</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(function(){ var i=document.getElementById('pwd-input'); if(i)i.focus(); }, 100);
+}
+function submitPassword(){
+  var input = document.getElementById('pwd-input');
+  var error = document.getElementById('pwd-error');
+  if(!input) return;
+  // ← YOUR PASSWORD IS SET HERE
+  if(input.value === 'TransofrmerPrime33@'){
+    _editUnlocked = true;
+    document.getElementById('pwd-modal').remove();
+    openPanel();
+  } else {
+    error.style.display = 'block';
+    input.value = '';
+    input.focus();
+    // shake animation
+    input.style.borderColor = '#ff5555';
+    setTimeout(function(){ input.style.borderColor = '#1A2A3A'; }, 1000);
+  }
+}
 </script>
 <div id="glow"></div>
-<button id="edit-fab" onclick="openPanel()">[ ✏ EDIT_PROFILE ]</button>
+<button id="edit-fab" onclick="checkPassword()">[ ✏ EDIT_PROFILE ]</button>
 
 <!-- EDIT OVERLAY -->
 <div id="edit-overlay" onclick="overlayClick(event)">
